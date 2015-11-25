@@ -11,11 +11,11 @@ import io.netty.handler.codec.string.StringEncoder;
 
 
 public class HelloClientInitializer extends ChannelInitializer<SocketChannel> {
-
+	public int channelId = 0;
+	public HelloClientHandler cHandle = null;
 	@Override
 	protected void initChannel(SocketChannel ch) throws Exception {
 		ChannelPipeline pipeline = ch.pipeline();
-
         /*
          * 这个地方的 必须和服务端对应上。否则无法正常解码和编码
          * 
@@ -27,7 +27,15 @@ public class HelloClientInitializer extends ChannelInitializer<SocketChannel> {
         pipeline.addLast("encoder", new StringEncoder());
         
         // 客户端的逻辑
-        pipeline.addLast("handler", new HelloClientHandler());
+        cHandle = new HelloClientHandler();
+        cHandle.setChannelId(this.channelId);
+        pipeline.addLast("handler", cHandle);
+	}
+	public int getChannelId() {
+		return this.channelId;
+	}
+	public void setChannelId(int channelId) {
+		this.channelId = channelId;
 	}
 
 }
